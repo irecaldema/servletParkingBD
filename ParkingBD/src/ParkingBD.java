@@ -1,6 +1,7 @@
 import com.zubiri.parking.ParkingVehiculos;
 import com.zubiri.parking.Vehiculo;
 import com.zubiri.parking.Coche;
+import com.mysql.jdbc.Driver;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -48,10 +49,12 @@ public class ParkingBD extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
+				
 		Connection con = null;	
 		Statement sentencia = null;
 		try{
+			System.out.println("en el try crear");
+			
 	        // Register JDBC driver
 	        Class.forName("com.mysql.jdbc.Driver");
 
@@ -73,7 +76,7 @@ public class ParkingBD extends HttpServlet {
 	        	    PRIMARY KEY (matricula)
 	        	    );*/
 	        
-	        ResultSet creacion = sentencia.executeQuery(sql);
+	        ResultSet creacion = sentencia.executeUpdate(sql);
 	        
 	        sql="select matricula, marca from coches";
 	        ResultSet mostrar = sentencia.executeQuery(sql);
@@ -84,7 +87,8 @@ public class ParkingBD extends HttpServlet {
 	        }
 	    
 		}catch(Exception e){
-			
+			System.out.println("en el catch 1");
+			System.err.println("error "+ e);
 		}
 	        
 		if (ParkingVehiculos.getVehiculos().size()==0){
@@ -98,6 +102,7 @@ public class ParkingBD extends HttpServlet {
 			//response(response,ParkingVehiculos.getVehiculos());
 			
 			try{
+				System.out.println("en el try mostrar");
 		        // Register JDBC driver
 		        Class.forName("com.mysql.jdbc.Driver");
 
@@ -115,12 +120,19 @@ public class ParkingBD extends HttpServlet {
 		        String [] marca=null;
 		        while(mostrar.next()){		        	
 		        	matricula[cont] = mostrar.getString("matricula");
+		        	System.out.println("contador"+cont);
+		        	System.out.println("matricula "+matricula[cont]);
 		        	marca[cont] = mostrar.getString("marca");
+		        	System.out.println("marca "+marca[cont]);
 		        	cont++;
 		        }
+		        
+		    con.close();    
 		    response(response,matricula,marca);
+		    
 			}catch(Exception e){
-				
+				System.out.println("en el catch 2");
+				System.err.println("error "+ e);
 			}
 			
 		}else if(gestion.equals("buscar_matricula")){
