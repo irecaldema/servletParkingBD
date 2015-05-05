@@ -76,31 +76,21 @@ public class ParkingBD extends HttpServlet {
 	        	    PRIMARY KEY (matricula)
 	        	    );*/
 	        
-	        ResultSet creacion = sentencia.executeUpdate(sql);
-	        
-	        sql="select matricula, marca from coches";
-	        ResultSet mostrar = sentencia.executeQuery(sql);
-	        
-	        while(mostrar.next()){
-	        	String matricula = mostrar.getString("matricula");
-	        	String marca = mostrar.getString("marca");
-	        }
-	    
+	        sentencia.executeUpdate(sql);	    
 		}catch(Exception e){
 			System.out.println("en el catch 1");
 			System.err.println("error "+ e);
 		}
 	        
-		if (ParkingVehiculos.getVehiculos().size()==0){
+		/*if (ParkingVehiculos.getVehiculos().size()==0){
 			//lectura del archivo
 			ParkingVehiculos.leerVehiculos();			
-		}
+		}*/
 		String gestion=request.getParameter("gestion");
 		System.out.println(gestion);
 		if (gestion.equals("mostrar_vehiculos")){
 			System.out.println("empieza mostrando");
-			//response(response,ParkingVehiculos.getVehiculos());
-			
+			//response(response,ParkingVehiculos.getVehiculos());			
 			try{
 				System.out.println("en el try mostrar");
 		        // Register JDBC driver
@@ -109,23 +99,24 @@ public class ParkingBD extends HttpServlet {
 		        // Open a connection
 		        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
 		        
-		        sentencia = con.createStatement();	        
-		        String sql;
+		        sentencia = con.createStatement();
 		        
-		        sql="select matricula, marca from coches";
+		        String sql;		        
+		        sql="SELECT matricula, marca FROM coches";
 		        ResultSet mostrar = sentencia.executeQuery(sql);
-		        
 		        int cont=0;
-		        String [] matricula=null;
-		        String [] marca=null;
-		        while(mostrar.next()){		        	
+		        String [] matricula = new String[100];
+		        String [] marca = new String[100];
+		        System.out.println("pre while");
+		        while(mostrar.next()){	
+		        	System.out.println("matricula:"+mostrar.getString("matricula"));
 		        	matricula[cont] = mostrar.getString("matricula");
-		        	System.out.println("contador"+cont);
 		        	System.out.println("matricula "+matricula[cont]);
 		        	marca[cont] = mostrar.getString("marca");
 		        	System.out.println("marca "+marca[cont]);
 		        	cont++;
 		        }
+		        System.out.println("post while");
 		        
 		    con.close();    
 		    response(response,matricula,marca);
@@ -137,14 +128,41 @@ public class ParkingBD extends HttpServlet {
 			
 		}else if(gestion.equals("buscar_matricula")){
 			System.out.println("empieza buscando");
-			String matricula=request.getParameter("matricula");
-			Vehiculo encontrado = new Coche();
+			String referencia=request.getParameter("matricula");
+			//Vehiculo encontrado = new Coche();
 			try{
-				encontrado = ParkingVehiculos.buscarVehiculo(matricula);
-				response(response, encontrado);
+				//encontrado = ParkingVehiculos.buscarVehiculo(matricula);
+				//response(response, encontrado);
+				
+				// Register JDBC driver
+				Class.forName("com.mysql.jdbc.Driver");
+
+		        // Open a connection
+		        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+		        
+		        sentencia = con.createStatement();
+		        
+		        String sql;
+		        //referencia="'"+referencia+"'";
+		        System.out.println("referencia: "+referencia);
+		        //sql="SELECT matricula, marca FROM coches WHERE matricula="+referencia;
+		        //sql="SELECT matricula, marca FROM coches WHERE matricula='"+referencia+"'";
+		        sql="SELECT matricula, marca FROM coches WHERE matricula=\""+referencia+"\"";
+		        ResultSet buscar = sentencia.executeQuery(sql);
+		        while(buscar.next()){
+			        String matricula = buscar.getString("matricula");
+			        String marca = buscar.getString("marca");	
+			        System.out.println("matricula: "+matricula);
+			        System.out.println("marca: "+marca);
+			        response(response,matricula,marca);
+		        }
+		        con.close();    
+		    	
 			}catch(ArrayIndexOutOfBoundsException e){
-				response(response, "no se encontro el vehiculo");
-			}			
+				//response(response, "no se encontro el vehiculo");
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		}else if(gestion.equals("anyadir_vehiculo")){
 			System.out.println("empieza anyadiendo");
 			int n_ruedas = Integer.parseInt(request.getParameter("numruedas"));
@@ -229,7 +247,7 @@ public class ParkingBD extends HttpServlet {
 				out.print("<b>marca:</b> "+vehiculos.get(i).getMarca()+"");
 				out.println("<p>-------------------------------</p>");
 			}
-			out.println("<a href='index.html'><button/>volver</a>");
+			out.println("<a href='index.html'><button>volver</button></a>");
 			out.println("</body>");
 			out.println("</html>");
 	}*/
@@ -240,12 +258,16 @@ public class ParkingBD extends HttpServlet {
 			out.println("<html>");
 			out.println("<body>");
 			out.println("<p>-------------------------------</p>");
-			for (int i=0;i<matricula.length;i++){				
+			for (int i=0;i<matricula.length;i++){	
+				if(matricula[i]==null){
+					break;
+				}else{
 				out.println("<b>matricula:</b> "+matricula[i]+" | ");
 				out.print("<b>marca:</b> "+marca[i]+"");
 				out.println("<p>-------------------------------</p>");
+				}
 			}
-			out.println("<a href='index.html'><button/>volver</a>");
+			out.println("<a href='index.html'><button>volver</button></a>");
 			out.println("</body>");
 			out.println("</html>");
 	}
@@ -256,7 +278,7 @@ public class ParkingBD extends HttpServlet {
 			out.println("<html>");
 			out.println("<body>");				
 			out.println("<p>"+msg+"</p>");
-			out.println("<a href='index.html'><button/>volver</a>");
+			out.println("<a href='index.html'><button>volver</button></a>");
 			out.println("</body>");
 			out.println("</html>");
 	}
@@ -268,7 +290,19 @@ public class ParkingBD extends HttpServlet {
 			out.println("<body>");
 			out.println("<p>"+coche.getMarca()+"</p>");
 			out.println("<p>"+coche.getMatricula()+"</p>");
-			out.println("<a href='index.html'><button/>volver</a>");
+			out.println("<a href='index.html'><button>volver</button></a>");
+			out.println("</body>");
+			out.println("</html>");
+	}
+	
+	private void response(HttpServletResponse response, String matricula, String marca)
+			throws IOException {
+			PrintWriter out = response.getWriter();
+			out.println("<html>");
+			out.println("<body>");
+			out.println("<p>"+marca+"</p>");
+			out.println("<p>"+matricula+"</p>");
+			out.println("<a href='index.html'><button>volver</button></a>");
 			out.println("</body>");
 			out.println("</html>");
 	}
@@ -286,7 +320,7 @@ public class ParkingBD extends HttpServlet {
 			out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
 			out.println("<input type='submit' id='submit' value='borrar'>");
 			out.println("</form>");
-			out.println("<a href='index.html'><button/>volver</a>");
+			out.println("<a href='index.html'><button>volver</button></a>");
 			out.println("</body>");
 			out.println("</html>");
 	}
@@ -337,7 +371,7 @@ public class ParkingBD extends HttpServlet {
 			out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
 			out.println("<input type='submit' id='submit' value='Modificar'>");
 		out.println("</form>");
-		out.println("<a href='index.html'><button/>Volver </a>");
+		out.println("<a href='index.html'><button>volver</button></a>");
 		out.println("</body>");
 		out.println("</html>");
 		}
