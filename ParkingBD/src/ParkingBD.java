@@ -173,14 +173,56 @@ public class ParkingBD extends HttpServlet {
 			boolean automatico = Boolean.parseBoolean(request.getParameter("automatico"));
 			int consumo = Integer.parseInt(request.getParameter("consumo"));	
 			System.out.println("new coche");
-			Coche nuevo = new Coche(n_ruedas,motor,marca,matricula,automatico,consumo);
-			ParkingVehiculos.anyadirVehiculosFichero(nuevo);
-			ParkingVehiculos.anyadirCoche(nuevo);
-			if(ParkingVehiculos.buscarVehiculo(matricula)==nuevo){
+					//Coche nuevo = new Coche(n_ruedas,motor,marca,matricula,automatico,consumo);
+					//ParkingVehiculos.anyadirVehiculosFichero(nuevo);
+					//ParkingVehiculos.anyadirCoche(nuevo);
+			try{
+				
+				// Register JDBC driver
+				Class.forName("com.mysql.jdbc.Driver");
+
+		        // Open a connection
+		        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+		        
+		        sentencia = con.createStatement();
+		        
+		        String sql;
+		        //INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
+		        System.out.println("INSERT INTO coches VALUES (\""+matricula+"\",\""+marca+"\","+motor+","+automatico+","+n_ruedas+","+consumo+")");
+		        sql="INSERT INTO coches VALUES (\""+matricula+"\",\""+marca+"\","+motor+","+automatico+","+n_ruedas+","+consumo+")";
+		        int crear = sentencia.executeUpdate(sql);
+		        System.out.println("valor crear: "+crear);
+        	    //matricula VARCHAR(7), marca VARCHAR(20), motor BOOLEAN,  automatico BOOLEAN,n_ruedas INTEGER(2),consumo INTEGER(3),
+		        sql="SELECT * FROM coches WHERE matricula='"+matricula+"'";
+		        ResultSet buscar = sentencia.executeQuery(sql);
+		        while(buscar.next()){
+			        String encontrado = buscar.getString("matricula");
+			        if(encontrado!=null){			        	
+				        String matricula2 = buscar.getString("matricula");
+				        String marca2 = buscar.getString("marca");
+				        Boolean motor2 = buscar.getBoolean("motor");
+				        Boolean automatico2 = buscar.getBoolean("automatico");
+				        Integer n_ruedas2 = buscar.getInt("n_ruedas");
+				        Integer consumo2 = buscar.getInt("consumo");
+				        System.out.println("matricula: "+matricula2);
+				        System.out.println("marca: "+marca2);
+				        response(response,matricula2,marca2,motor2,automatico2,n_ruedas2,consumo2);
+					}else{
+						response(response, "error al anyadir vehiculo");
+					}
+		        }
+		        con.close();    
+		    	
+			}catch(ArrayIndexOutOfBoundsException e){
+				//response(response, "no se encontro el vehiculo");
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			/*if(ParkingVehiculos.buscarVehiculo(matricula)==nuevo){
 				response(response, "vehiculo anyadido");
 			}else{
 				response(response, "error al anyadir vehiculo");
-			}
+			}*/
 		}else if(gestion.equals("borrar_vehiculo")){
 			System.out.println("borrando");
 			String matricula = request.getParameter("matricula");
