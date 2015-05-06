@@ -22,7 +22,7 @@
 <form name="buscar_matricula" method="post" onsubmit="return validacion_busqueda_matricula()" action="GestorBD"> 
 	<input name="gestion" hidden="true" type="text"  value="buscar_matricula"/>
 	Busqueda por matricula
-   	<input name="matricula" type="text"  value="matricula (4 numeros 3 letras)"></input>
+	<input name="matricula" type="text"  value="matricula (4 numeros 3 letras)"></input>
     <input type="submit" id="submit" value="buscar">
 </form>
 </div></div>
@@ -85,17 +85,14 @@
 <br/>
 <script type="text/javascript">
 function validacion_busqueda_matricula(){
-	console.log("comprobacion busqueda matricuila");
-	var x = document.forms["busqueda_matrucula"]["matricula"].value;
+	var x = document.forms["buscar_matricula"]["matricula"].value;
 	if(validar_matricula(x)){
-		console.log("final de validacion ok");
 		return true;
 	}else{
-		console.log("final de validacion error");
 		return false;
 	};	
-	
 }
+
 function validacion_modificar_vehiculo() {	
 	var x = document.forms["modificar_vehiculo"]["matriculanueva"].value;
 	var a = document.forms["modificar_vehiculo"]["matriculavieja"].value;

@@ -1,11 +1,9 @@
 import com.zubiri.parking.ParkingVehiculos;
 import com.zubiri.parking.Vehiculo;
 import com.zubiri.parking.Coche;
-import com.mysql.jdbc.Driver;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.sql.*;
 
@@ -142,19 +140,22 @@ public class ParkingBD extends HttpServlet {
 		        
 		        sentencia = con.createStatement();
 		        
-		        String sql;
-		        //referencia="'"+referencia+"'";
-		        System.out.println("referencia: "+referencia);
-		        //sql="SELECT matricula, marca FROM coches WHERE matricula="+referencia;
+		        String sql;		    
+		        System.out.println("referencia: "+referencia);		     
 		        //sql="SELECT matricula, marca FROM coches WHERE matricula='"+referencia+"'";
-		        sql="SELECT matricula, marca FROM coches WHERE matricula=\""+referencia+"\"";
+		        sql="SELECT * FROM coches WHERE matricula=\""+referencia+"\"";
+        	    //matricula VARCHAR(7), marca VARCHAR(20), motor BOOLEAN,  automatico BOOLEAN,n_ruedas INTEGER(2),consumo INTEGER(3),
 		        ResultSet buscar = sentencia.executeQuery(sql);
 		        while(buscar.next()){
 			        String matricula = buscar.getString("matricula");
-			        String marca = buscar.getString("marca");	
+			        String marca = buscar.getString("marca");
+			        Boolean motor = buscar.getBoolean("motor");
+			        Boolean automatico = buscar.getBoolean("automatico");
+			        Integer n_ruedas = buscar.getInt("n_ruedas");
+			        Integer consumo = buscar.getInt("consumo");
 			        System.out.println("matricula: "+matricula);
 			        System.out.println("marca: "+marca);
-			        response(response,matricula,marca);
+			        response(response,matricula,marca,motor,automatico,n_ruedas,consumo);
 		        }
 		        con.close();    
 		    	
@@ -295,14 +296,38 @@ public class ParkingBD extends HttpServlet {
 			out.println("</html>");
 	}
 	
-	private void response(HttpServletResponse response, String matricula, String marca)
+	private void response(HttpServletResponse response, String matricula, String marca,Boolean motor,Boolean automatico,Integer n_ruedas,Integer consumo)
 			throws IOException {
 			PrintWriter out = response.getWriter();
 			out.println("<html>");
 			out.println("<body>");
-			out.println("<p>"+marca+"</p>");
-			out.println("<p>"+matricula+"</p>");
-			out.println("<a href='index.html'><button>volver</button></a>");
+			out.println("<table align=\"center\" border=5><tr>");
+			out.println("<td>matricula</td>");
+			out.println("<td>marca</td>");
+			out.println("<td>motor</td>");
+			out.println("<td>automatico</td>");
+			out.println("<td>numero de ruedas</td>");
+			out.println("<td>consumo</td>");
+			out.println("</tr><tr>");
+			out.println("<td>"+matricula+"</td>");
+			out.println("<td>"+marca+"</td>");
+			if(motor) {
+				out.println("<td>si</td>");
+			}else{
+				out.println("<td>no</td>");
+			}			
+			if(automatico){
+				out.println("<td>si</td>");
+			}else{
+				out.println("<td>no</td>");
+			}			
+			out.println("<td>"+n_ruedas+"</td>");
+			out.println("<td>"+consumo+"</td>");
+			out.println("</tr><tr>");
+			out.println("<td colspan=6>");
+			out.println("<center><a href='index.html'><button>volver</button></a></center>");
+			out.println("</td>");
+			out.println("</tr></table>");
 			out.println("</body>");
 			out.println("</html>");
 	}
