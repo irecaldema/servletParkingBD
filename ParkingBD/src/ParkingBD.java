@@ -167,7 +167,9 @@ public class ParkingBD extends HttpServlet {
 		}else if(gestion.equals("anyadir_vehiculo")){
 			System.out.println("empieza anyadiendo");
 			int n_ruedas = Integer.parseInt(request.getParameter("numruedas"));
+			System.out.println(request.getParameter("motor"));
 			boolean motor = Boolean.parseBoolean(request.getParameter("motor"));
+			System.out.println(motor);
 			String marca = request.getParameter("marca");
 			String matricula = request.getParameter("matricula");
 			boolean automatico = Boolean.parseBoolean(request.getParameter("automatico"));
