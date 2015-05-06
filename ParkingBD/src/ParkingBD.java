@@ -227,17 +227,40 @@ public class ParkingBD extends HttpServlet {
 			}*/
 		}else if(gestion.equals("borrar_vehiculo")){
 			System.out.println("borrando");
-			String matricula = request.getParameter("matricula");
+			String sentenciado = request.getParameter("matricula");
 			Boolean confirmacion = Boolean.parseBoolean(request.getParameter("confirmacion"));
 			if (confirmacion!=true){
 				confirmacion=false;
-				Vehiculo sentenciado = new Coche();
-				sentenciado=ParkingVehiculos.buscarVehiculo(matricula);
+				//Vehiculo sentenciado = new Coche();
+				//sentenciado=ParkingVehiculos.buscarVehiculo(matricula);
 				response(response, "Seguro que quieres borrar el vehiculo?", sentenciado);
 			}else{
-				ParkingVehiculos.borrarVehiculosFichero(matricula);
-				ParkingVehiculos.borrarVehiculo(matricula);
-				response(response, "Se ha borrado el vehiculo");
+				//ParkingVehiculos.borrarVehiculosFichero(sentenciado);
+				//ParkingVehiculos.borrarVehiculo(sentenciado);
+				
+				try{					
+					// Register JDBC driver
+					Class.forName("com.mysql.jdbc.Driver");
+			        // Open a connection
+			        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);			        
+			        sentencia = con.createStatement();
+			        
+			        String sql;
+			        //INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
+			        //DELETE FROM coches where matricula="0000AAA";
+			        System.out.println("DELETE FROM coches where matricula=\"+sentenciado\"");
+			        sql="DELETE FROM coches where matricula=\"0000AAA\"";
+			        int borrar = sentencia.executeUpdate(sql);
+			        System.out.println("valor crear: "+borrar);
+			        if(borrar==1){
+			        	response(response, "Se ha borrado el vehiculo");
+			        }
+			        con.close();			    	
+				}catch(ArrayIndexOutOfBoundsException e){
+					//response(response, "no se encontro el vehiculo");
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 
 		}else if (gestion.equals("modificar_vehiculo")) {			
@@ -376,14 +399,14 @@ public class ParkingBD extends HttpServlet {
 			out.println("</html>");
 	}
 	
-	private void response(HttpServletResponse response,String msg ,Vehiculo coche)
+	/*private void response(HttpServletResponse response,String msg ,Vehiculo coche)
 			throws IOException {
 			PrintWriter out = response.getWriter();
 			out.println("<html>");
 			out.println("<body align='center'>");
 			out.println("<p>"+msg+"</p>");
 			out.println("<p>matricula:"+coche.getMatricula()+" | marca del vehiculo: "+coche.getMarca()+"</p>");
-			out.println("<form name=\"borrar_vehiculo\" method=\"post\" action=\"Gestor\">");
+			out.println("<form name=\"borrar_vehiculo\" method=\"post\" action=\"GestorBD\">");
 			out.println("<input name='gestion' hidden='true' type='text'  value='borrar_vehiculo'/>");
 			out.println("<input name=\"matricula\" hidden=\"true\" type=\"text\"  value="+coche.getMatricula()+"></input>");
 			out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
@@ -392,7 +415,25 @@ public class ParkingBD extends HttpServlet {
 			out.println("<a href='index.html'><button>volver</button></a>");
 			out.println("</body>");
 			out.println("</html>");
-	}
+	}*/
+	
+	private void response(HttpServletResponse response,String msg ,String matricula)
+			throws IOException {
+			PrintWriter out = response.getWriter();
+			out.println("<html>");
+			out.println("<body align='center'>");
+			out.println("<p>"+msg+"</p>");
+			out.println("<p>matricula:"+matricula+" | marca del vehiculo: "+/*coche.getMarca()+*/"</p>");
+			out.println("<form name=\"borrar_vehiculo\" method=\"post\" action=\"GestorBD\">");
+			out.println("<input name='gestion' hidden='true' type='text'  value='borrar_vehiculo'/>");
+			out.println("<input name=\"matricula\" hidden=\"true\" type=\"text\"  value="+matricula+"></input>");
+			out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
+			out.println("<input type='submit' id='submit' value='borrar'>");
+			out.println("</form>");
+			out.println("<a href='index.html'><button>volver</button></a>");
+			out.println("</body>");
+			out.println("</html>");
+	}	
 	
 	private void formulario_modificar(HttpServletResponse response,String matricula)
 			throws IOException {
