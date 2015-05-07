@@ -254,6 +254,8 @@ public class ParkingBD extends HttpServlet {
 			        System.out.println("valor crear: "+borrar);
 			        if(borrar==1){
 			        	response(response, "Se ha borrado el vehiculo");
+			        }else{
+			        	response(response, "No se ha borrado el vehiculo, compruebe la mtricula: "+sentenciado+".");
 			        }
 			        con.close();			    	
 				}catch(ArrayIndexOutOfBoundsException e){
