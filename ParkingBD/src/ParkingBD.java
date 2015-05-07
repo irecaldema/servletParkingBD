@@ -248,8 +248,8 @@ public class ParkingBD extends HttpServlet {
 			        String sql;
 			        //INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
 			        //DELETE FROM coches where matricula="0000AAA";
-			        System.out.println("DELETE FROM coches where matricula=\"+sentenciado\"");
-			        sql="DELETE FROM coches where matricula=\"0000AAA\"";
+			        System.out.println("DELETE FROM coches where matricula=\""+sentenciado+"\"");
+			        sql="DELETE FROM coches where matricula=\""+sentenciado+"\"";
 			        int borrar = sentencia.executeUpdate(sql);
 			        System.out.println("valor crear: "+borrar);
 			        if(borrar==1){
