@@ -255,7 +255,7 @@ public class ParkingBD extends HttpServlet {
 			        if(borrar==1){
 			        	response(response, "Se ha borrado el vehiculo");
 			        }else{
-			        	response(response, "No se ha borrado el vehiculo, compruebe la mtricula: "+sentenciado+".");
+			        	response(response, "No se ha borrado el vehiculo, compruebe la matricula: "+sentenciado+".");
 			        }
 			        con.close();			    	
 				}catch(ArrayIndexOutOfBoundsException e){
@@ -267,22 +267,61 @@ public class ParkingBD extends HttpServlet {
 
 		}else if (gestion.equals("modificar_vehiculo")) {			
 			System.out.println("Empieza modificando");
+			//UPDATE tabla SET campo = ‘valor’, campo2 = ‘valor2′ WHERE condición;
+			//"UPDATE coches SET matricula = "+matriculanueva+" WHERE SELECT matricula FROM coches where matricula="+matriculavieja+";
+			//"UPDATE coches SET "+cambios+" WHERE SELECT matricula FROM coches where matricula="+matriculavieja+";
+			//cambios="matricula = \""+matriculanueva+"\",";
+			//cambios+= marca = \""+marca+"\",";
+			//cambios+= motor = \""+motor+"\",";
+			//cambios+= automatico = \""+automatico+"\",";
+			//cambios+= n_ruedas = \""+n_ruedas+"\",";
+			//cambios+= consumo = \""+consumo+"\"";
 			Boolean confirmacion = Boolean.parseBoolean(request.getParameter("confirmacion"));
 			if(confirmacion!=true){
 				formulario_modificar(response,request.getParameter("matriculavieja"));
 			}else{
 				int n_ruedas = Integer.parseInt(request.getParameter("numruedas"));
-				//System.out.println("prueba1 "+n_ruedas);
 				boolean motor = Boolean.parseBoolean(request.getParameter("motor"));
 				String marca = request.getParameter("marca");
 				String matriculanueva = request.getParameter("matriculanueva");
-				//System.out.println("prueba2 "+matriculanueva);
 				String matriculavieja = request.getParameter("matriculavieja");
-				//System.out.println("prueba3 "+matriculavieja);
 				boolean automatico = Boolean.parseBoolean(request.getParameter("automatico"));
 				int consumo = Integer.parseInt(request.getParameter("consumo"));
+				String cambios="";
+				cambios="matricula = \""+matriculanueva+"\",";
+				cambios+=" marca = \""+marca+"\",";
+				cambios+=" motor = \""+motor+"\",";
+				cambios+=" automatico = \""+automatico+"\",";
+				cambios+=" n_ruedas = \""+n_ruedas+"\",";
+				cambios+=" consumo = \""+consumo+"\"";
 				
-				try {
+				try{					
+					// Register JDBC driver
+					Class.forName("com.mysql.jdbc.Driver");
+			        // Open a connection
+			        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);			        
+			        sentencia = con.createStatement();
+			        
+			        String sql;
+			        //INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
+			        //DELETE FROM coches where matricula="0000AAA";
+			        System.out.println("UPDATE coches SET "+cambios+" WHERE SELECT matricula FROM coches WHERE matricula=\""+matriculavieja+"\"");
+			        sql="UPDATE coches SET "+cambios+" WHERE SELECT matricula FROM coches where matricula=\""+matriculavieja+"\"";
+			        int modificar = sentencia.executeUpdate(sql);
+			        System.out.println("valor crear: "+modificar);
+			        if(modificar==1){
+			        	response(response, "Se ha modificado el vehiculo"+cambios);
+			        }else{
+			        	response(response, "No se ha borrado el vehiculo, compruebe las matricula1: "+matriculavieja+" matricula2 "+matriculanueva );
+			        }
+			        con.close();
+				}catch(ArrayIndexOutOfBoundsException e){
+					//response(response, "no se encontro el vehiculo");
+				}catch(Exception e){
+					e.printStackTrace();
+				}			        
+				
+				/*try {
 					if (ParkingVehiculos.buscarVehiculo(matriculavieja) != null) {
 						try {
 							if (ParkingVehiculos.buscarVehiculo(matriculanueva) != null) {
@@ -298,7 +337,7 @@ public class ParkingBD extends HttpServlet {
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
 					response(response, "No se encontró el vehículo");
-				}
+				}*/
 			}
 		}
 		//ParkingVehiculos pv = new ParkingVehiculos();
