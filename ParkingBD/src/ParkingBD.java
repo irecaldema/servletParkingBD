@@ -280,9 +280,9 @@ public class ParkingBD extends HttpServlet {
 			//cambios+= n_ruedas = \""+n_ruedas+"\",";
 			//cambios+= consumo = \""+consumo+"\"";
 			Boolean confirmacion = Boolean.parseBoolean(request.getParameter("confirmacion"));
-			//if(confirmacion!=true){
-				//formulario_modificar(response,request.getParameter("matriculavieja"));
-			//}else{
+			if(confirmacion!=true){
+				formulario_modificar(response,request.getParameter("matriculavieja"));
+			}else{
 				int n_ruedas = Integer.parseInt(request.getParameter("numruedas"));
 				boolean motor = Boolean.parseBoolean(request.getParameter("motor"));
 				String marca = request.getParameter("marca");
@@ -323,7 +323,7 @@ public class ParkingBD extends HttpServlet {
 				}catch(Exception e){
 					e.printStackTrace();
 				}			        
-			//}	
+			}	
 				/*try {
 					if (ParkingVehiculos.buscarVehiculo(matriculavieja) != null) {
 						try {
@@ -351,7 +351,7 @@ public class ParkingBD extends HttpServlet {
 	/*private void response(HttpServletResponse response, ArrayList<Vehiculo> vehiculos)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel="stylesheet" type="text/css" href="../WebContent/style.css"><head>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
 			out.println("<body>");
 			out.println("<p>-------------------------------</p>");
 			for (int i=0;i<vehiculos.size();i++){				
@@ -364,10 +364,11 @@ public class ParkingBD extends HttpServlet {
 			out.println("</html>");
 	}*/
 	
+	//respuesta mopstrar
 	private void response(HttpServletResponse response, String [] matricula, String [] marca)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
 			out.println("<body>");
 			out.println("<p>-------------------------------</p>");
 			for (int i=0;i<matricula.length;i++){	
@@ -384,10 +385,11 @@ public class ParkingBD extends HttpServlet {
 			out.println("</html>");
 	}
 	
+	//respuesta simple
 	private void response(HttpServletResponse response,String msg)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
 			out.println("<body>");				
 			out.println("<p>"+msg+"</p>");
 			out.println("<a href='index.html'><button>volver</button></a>");
@@ -395,22 +397,23 @@ public class ParkingBD extends HttpServlet {
 			out.println("</html>");
 	}
 	
-	private void response(HttpServletResponse response, Vehiculo coche)
+	/*private void response(HttpServletResponse response, Vehiculo coche)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
 			out.println("<body>");
 			out.println("<p>"+coche.getMarca()+"</p>");
 			out.println("<p>"+coche.getMatricula()+"</p>");
 			out.println("<a href='index.html'><button>volver</button></a>");
 			out.println("</body>");
 			out.println("</html>");
-	}
+	}*/
 	
+	//respuesta buscar
 	private void response(HttpServletResponse response, String matricula, String marca,Boolean motor,Boolean automatico,Integer n_ruedas,Integer consumo)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
 			out.println("<body>");
 			out.println("<table align=\"center\" border=5><tr>");
 			out.println("<td>matricula</td>");
@@ -446,7 +449,7 @@ public class ParkingBD extends HttpServlet {
 	/*private void response(HttpServletResponse response,String msg ,Vehiculo coche)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
 			out.println("<body align='center'>");
 			out.println("<p>"+msg+"</p>");
 			out.println("<p>matricula:"+coche.getMatricula()+" | marca del vehiculo: "+coche.getMarca()+"</p>");
@@ -461,13 +464,14 @@ public class ParkingBD extends HttpServlet {
 			out.println("</html>");
 	}*/
 	
+	//confirmacion borrar
 	private void response(HttpServletResponse response,String msg ,String matricula)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
 			out.println("<body align='center'>");
 			out.println("<p>"+msg+"</p>");
-			out.println("<p>matricula:"+matricula+" | marca del vehiculo: "+/*coche.getMarca()+*/"</p>");
+			out.println("<p>matricula:"+matricula+"</p>");
 			out.println("<form name=\"borrar_vehiculo\" method=\"post\" action=\"GestorBD\">");
 			out.println("<input name='gestion' hidden='true' type='text'  value='borrar_vehiculo'/>");
 			out.println("<input name=\"matricula\" hidden=\"true\" type=\"text\"  value="+matricula+"></input>");
@@ -492,7 +496,7 @@ public class ParkingBD extends HttpServlet {
 		
 		response.setContentType( "text/html; charset=iso-8859-1" );
 		PrintWriter out = response.getWriter();
-		out.println("<html><head><link rel="stylesheet" type="text/css" href="../WebContent/style.css"><head>");
+		out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
 		out.println("<body>");
 		out.println("<form name='modificar_vehiculo' method='post' action='GestorBD'>");
 			out.println("<input name='gestion' hidden='true' type='text' value='modificar_vehiculo'/>");
@@ -530,6 +534,97 @@ public class ParkingBD extends HttpServlet {
 		out.println("</html>");
 		}
 	}*/
+	
+	//respuesta modificar
+	private void formulario_modificar(HttpServletResponse response,String referencia)
+			throws IOException {
+		System.out.println("se esta modificando el vehiculo con matricula: "+referencia);
+		Connection con = null;	
+		Statement sentencia = null;
+		try{
+			//encontrado = ParkingVehiculos.buscarVehiculo(matricula);
+			//response(response, encontrado);
+			
+			// Register JDBC driver
+			Class.forName("com.mysql.jdbc.Driver");
+
+	        // Open a connection
+	        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+	        
+	        sentencia = con.createStatement();
+	        
+	        String sql;		    
+	        System.out.println("referencia: "+referencia);		     
+	        //sql="SELECT matricula, marca FROM coches WHERE matricula='"+referencia+"'";
+	        sql="SELECT * FROM coches WHERE matricula=\""+referencia+"\"";
+    	    //matricula VARCHAR(7), marca VARCHAR(20), motor BOOLEAN,  automatico BOOLEAN,n_ruedas INTEGER(2),consumo INTEGER(3),
+	        ResultSet buscar = sentencia.executeQuery(sql);
+	        String matricula = null;
+	        String marca = null;
+	        Boolean motor = false;
+	        Boolean automatico = false;
+	        Integer n_ruedas = 0;
+	        Integer consumo = 0; 
+	        while(buscar.next()){
+		        matricula = buscar.getString("matricula");
+		        marca = buscar.getString("marca");
+		        motor = buscar.getBoolean("motor");
+		        automatico = buscar.getBoolean("automatico");
+		        n_ruedas = buscar.getInt("n_ruedas");
+		        consumo = buscar.getInt("consumo");
+		        System.out.println("matricula: "+matricula);
+		        System.out.println("marca: "+marca);
+		        //response(response,matricula,marca,motor,automatico,n_ruedas,consumo);
+	        }
+	        
+	        response.setContentType( "text/html; charset=iso-8859-1" );
+			PrintWriter out = response.getWriter();
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
+			out.println("<body>");
+			out.println("<form name='modificar_vehiculo' method='post' action='GestorBD'>");
+				out.println("<input name='gestion' hidden='true' type='text' value='modificar_vehiculo'/>");
+				out.println("<input name='matriculavieja' type='text' value='"+referencia+"' hidden='true'/> <br>");
+				out.println("Matricula a modificar: <input type='text' value='"+referencia+"' disabled/> <br>");
+				out.println("Nueva matrícula: <input name='matriculanueva' type='text' id='matricula' value='matricula (4 numeros 3 letras)'/> <br>");
+				out.println("Marca: <input name='marca' type='text' id='marca' value='"+marca+"' /> <br>");
+				out.println("Número de ruedas: <input name='numruedas' type='text' id='numruedas' value='"+n_ruedas+"' /> <br>");
+				out.println("¿Tiene motor?");
+				String motor_si="";
+				String motor_no="";
+				if (motor) {
+					motor_si="checked";
+				} else {
+					motor_no="checked";
+				}
+				out.println("<input name='motor' type='radio' value='true' "+motor_si+" /> Sí");
+				out.println("<input name='motor' type='radio' value='false' "+motor_no+"/> No <br>");
+				out.println("¿Es automático?");
+				String automatico_si="";
+				String automatico_no="";
+				if (automatico) {
+					automatico_si="checked";
+				} else {
+					automatico_no="checked";
+				}
+				out.println("<input name='automatico' type='radio' value='true' "+automatico_si+" /> Sí");
+				out.println("<input name='automatico' type='radio' value='false' "+automatico_no+"/> No <br>");
+				out.println("Consumo en 100km <input name='consumo' type='text' id='consumo100km' value='"+consumo+"' /> <br>");
+				out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
+				out.println("<input type='submit' id='submit' value='Modificar'>");
+			out.println("</form>");
+			out.println("<a href='index.html'><button>volver</button></a>");
+			out.println("</body>");
+			out.println("</html>");
+	        
+	        con.close();
+	    	
+		}catch(ArrayIndexOutOfBoundsException e){
+			//response(response, "no se encontro el vehiculo");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	
 
 }
