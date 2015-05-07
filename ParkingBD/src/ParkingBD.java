@@ -277,9 +277,9 @@ public class ParkingBD extends HttpServlet {
 			//cambios+= n_ruedas = \""+n_ruedas+"\",";
 			//cambios+= consumo = \""+consumo+"\"";
 			Boolean confirmacion = Boolean.parseBoolean(request.getParameter("confirmacion"));
-			if(confirmacion!=true){
-				formulario_modificar(response,request.getParameter("matriculavieja"));
-			}else{
+			//if(confirmacion!=true){
+				//formulario_modificar(response,request.getParameter("matriculavieja"));
+			//}else{
 				int n_ruedas = Integer.parseInt(request.getParameter("numruedas"));
 				boolean motor = Boolean.parseBoolean(request.getParameter("motor"));
 				String marca = request.getParameter("marca");
@@ -290,8 +290,8 @@ public class ParkingBD extends HttpServlet {
 				String cambios="";
 				cambios="matricula = \""+matriculanueva+"\",";
 				cambios+=" marca = \""+marca+"\",";
-				cambios+=" motor = \""+motor+"\",";
-				cambios+=" automatico = \""+automatico+"\",";
+				cambios+=" motor = "+motor+",";
+				cambios+=" automatico = "+automatico+",";
 				cambios+=" n_ruedas = \""+n_ruedas+"\",";
 				cambios+=" consumo = \""+consumo+"\"";
 				
@@ -305,14 +305,14 @@ public class ParkingBD extends HttpServlet {
 			        String sql;
 			        //INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
 			        //DELETE FROM coches where matricula="0000AAA";
-			        System.out.println("UPDATE coches SET "+cambios+" WHERE SELECT matricula FROM coches WHERE matricula=\""+matriculavieja+"\"");
-			        sql="UPDATE coches SET "+cambios+" WHERE SELECT matricula FROM coches where matricula=\""+matriculavieja+"\"";
+			        System.out.println("UPDATE coches SET "+cambios+" WHERE matricula=\""+matriculavieja+"\"");
+			        sql="UPDATE coches SET "+cambios+" WHERE matricula=\""+matriculavieja+"\"";
 			        int modificar = sentencia.executeUpdate(sql);
 			        System.out.println("valor crear: "+modificar);
 			        if(modificar==1){
-			        	response(response, "Se ha modificado el vehiculo"+cambios);
+			        	response(response, "Se ha modificado el vehiculo "+cambios);
 			        }else{
-			        	response(response, "No se ha borrado el vehiculo, compruebe las matricula1: "+matriculavieja+" matricula2 "+matriculanueva );
+			        	response(response, "Error! No se ha modificado el vehiculo, compruebe las matricula1: "+matriculavieja+" matricula2 "+matriculanueva );
 			        }
 			        con.close();
 				}catch(ArrayIndexOutOfBoundsException e){
@@ -320,7 +320,7 @@ public class ParkingBD extends HttpServlet {
 				}catch(Exception e){
 					e.printStackTrace();
 				}			        
-				
+			//}	
 				/*try {
 					if (ParkingVehiculos.buscarVehiculo(matriculavieja) != null) {
 						try {
@@ -337,8 +337,8 @@ public class ParkingBD extends HttpServlet {
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
 					response(response, "No se encontró el vehículo");
-				}*/
-			}
+				}
+			}*/
 		}
 		//ParkingVehiculos pv = new ParkingVehiculos();
 		//response(response,"prueba");
@@ -476,14 +476,14 @@ public class ParkingBD extends HttpServlet {
 			out.println("</html>");
 	}	
 	
-	private void formulario_modificar(HttpServletResponse response,String matricula)
+	/*private void formulario_modificar(HttpServletResponse response,String matricula)
 			throws IOException {
 		System.out.println("se esta modificando el vehiculo con matricula: "+matricula);
 		Vehiculo vehiculo_viejo = new Coche();
 		vehiculo_viejo=ParkingVehiculos.buscarVehiculo(matricula);
 		
 		if (vehiculo_viejo instanceof Coche){
-			Coche coche_viejo = ( Coche ) vehiculo_viejo;
+			//Coche coche_viejo = ( Coche ) vehiculo_viejo;
 			//coche_viejo.getConsumo100km();
 			System.out.println("prueba get matricula: "+coche_viejo.getMatricula());
 		
@@ -491,7 +491,7 @@ public class ParkingBD extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		out.println("<html>");
 		out.println("<body>");
-		out.println("<form name='modificar_vehiculo' method='post' action='Gestor'>");
+		out.println("<form name='modificar_vehiculo' method='post' action='GestorBD'>");
 			out.println("<input name='gestion' hidden='true' type='text' value='modificar_vehiculo'/>");
 			out.println("<input name='matriculavieja' type='text' value='"+coche_viejo.getMatricula()+"' hidden='true'/> <br>");
 			out.println("Matricula a modificar: <input type='text' value='"+coche_viejo.getMatricula()+"' disabled/> <br>");
@@ -526,7 +526,7 @@ public class ParkingBD extends HttpServlet {
 		out.println("</body>");
 		out.println("</html>");
 		}
-	}
+	}*/
 	
 
 }
