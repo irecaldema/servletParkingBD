@@ -146,17 +146,20 @@ public class ParkingBD extends HttpServlet {
 		        sql="SELECT * FROM coches WHERE matricula=\""+referencia+"\"";
         	    //matricula VARCHAR(7), marca VARCHAR(20), motor BOOLEAN,  automatico BOOLEAN,n_ruedas INTEGER(2),consumo INTEGER(3),
 		        ResultSet buscar = sentencia.executeQuery(sql);
-		        while(buscar.next()){
-			        String matricula = buscar.getString("matricula");
-			        String marca = buscar.getString("marca");
-			        Boolean motor = buscar.getBoolean("motor");
-			        Boolean automatico = buscar.getBoolean("automatico");
-			        Integer n_ruedas = buscar.getInt("n_ruedas");
-			        Integer consumo = buscar.getInt("consumo");
-			        System.out.println("matricula: "+matricula);
-			        System.out.println("marca: "+marca);
-			        response(response,matricula,marca,motor,automatico,n_ruedas,consumo);
-		        }
+		        System.out.println("resultado: "+buscar);
+		        if(buscar.next()){
+			        while(buscar.next()){		        	
+				        String matricula = buscar.getString("matricula");			        
+				        String marca = buscar.getString("marca");
+				        Boolean motor = buscar.getBoolean("motor");
+				        Boolean automatico = buscar.getBoolean("automatico");
+				        Integer n_ruedas = buscar.getInt("n_ruedas");
+				        Integer consumo = buscar.getInt("consumo"); 			      
+				        response(response,matricula,marca,motor,automatico,n_ruedas,consumo);
+			        }
+		        }else{
+		        	response(response, "No se ha encontrado el vehiculo, compruebe la matricula: "+referencia+".");
+			    }       
 		        con.close();    
 		    	
 			}catch(ArrayIndexOutOfBoundsException e){
@@ -348,7 +351,7 @@ public class ParkingBD extends HttpServlet {
 	/*private void response(HttpServletResponse response, ArrayList<Vehiculo> vehiculos)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html>");
+			out.println("<html><head><link rel="stylesheet" type="text/css" href="../WebContent/style.css"><head>");
 			out.println("<body>");
 			out.println("<p>-------------------------------</p>");
 			for (int i=0;i<vehiculos.size();i++){				
@@ -364,7 +367,7 @@ public class ParkingBD extends HttpServlet {
 	private void response(HttpServletResponse response, String [] matricula, String [] marca)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
 			out.println("<body>");
 			out.println("<p>-------------------------------</p>");
 			for (int i=0;i<matricula.length;i++){	
@@ -384,7 +387,7 @@ public class ParkingBD extends HttpServlet {
 	private void response(HttpServletResponse response,String msg)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
 			out.println("<body>");				
 			out.println("<p>"+msg+"</p>");
 			out.println("<a href='index.html'><button>volver</button></a>");
@@ -395,7 +398,7 @@ public class ParkingBD extends HttpServlet {
 	private void response(HttpServletResponse response, Vehiculo coche)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
 			out.println("<body>");
 			out.println("<p>"+coche.getMarca()+"</p>");
 			out.println("<p>"+coche.getMatricula()+"</p>");
@@ -407,7 +410,7 @@ public class ParkingBD extends HttpServlet {
 	private void response(HttpServletResponse response, String matricula, String marca,Boolean motor,Boolean automatico,Integer n_ruedas,Integer consumo)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
 			out.println("<body>");
 			out.println("<table align=\"center\" border=5><tr>");
 			out.println("<td>matricula</td>");
@@ -443,7 +446,7 @@ public class ParkingBD extends HttpServlet {
 	/*private void response(HttpServletResponse response,String msg ,Vehiculo coche)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
 			out.println("<body align='center'>");
 			out.println("<p>"+msg+"</p>");
 			out.println("<p>matricula:"+coche.getMatricula()+" | marca del vehiculo: "+coche.getMarca()+"</p>");
@@ -461,7 +464,7 @@ public class ParkingBD extends HttpServlet {
 	private void response(HttpServletResponse response,String msg ,String matricula)
 			throws IOException {
 			PrintWriter out = response.getWriter();
-			out.println("<html>");
+			out.println("<html><head><link rel='stylesheet' type='text/css' href='../WebContent/style.css'><head>");
 			out.println("<body align='center'>");
 			out.println("<p>"+msg+"</p>");
 			out.println("<p>matricula:"+matricula+" | marca del vehiculo: "+/*coche.getMarca()+*/"</p>");
@@ -489,7 +492,7 @@ public class ParkingBD extends HttpServlet {
 		
 		response.setContentType( "text/html; charset=iso-8859-1" );
 		PrintWriter out = response.getWriter();
-		out.println("<html>");
+		out.println("<html><head><link rel="stylesheet" type="text/css" href="../WebContent/style.css"><head>");
 		out.println("<body>");
 		out.println("<form name='modificar_vehiculo' method='post' action='GestorBD'>");
 			out.println("<input name='gestion' hidden='true' type='text' value='modificar_vehiculo'/>");
