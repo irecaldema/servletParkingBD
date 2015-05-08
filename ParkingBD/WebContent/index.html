@@ -149,13 +149,12 @@ function validacion_busqueda_matricula() {
 	} else {
 		console.log("Final de validación, Error");
 		return false;
-	};	
+	};
 	
 }
-function validacion_modificar_vehiculo() {	
-	var x = document.forms["modificar_vehiculo"]["matriculanueva"].value;
+function validacion_modificar_vehiculo() {
 	var a = document.forms["modificar_vehiculo"]["matriculavieja"].value;
-	if (validar_matricula(a) && validar_matricula(x)) {
+	if (validar_matricula(a)) {
 		return true;
 	} else {
 		return false;
@@ -167,7 +166,7 @@ function validacion_anadir_vehiculo() {
 		return true;
 	} else {
 		return false;
-	};		
+	};
 }
 function validacion_borrar_vehiculo() {
 	var x = document.forms["borrar_vehiculo"]["matricula"].value;
@@ -175,7 +174,7 @@ function validacion_borrar_vehiculo() {
 		return true;
 	} else {
 		return false;
-	};		
+	};
 }
 function validar_matricula(x) {
 	if (x == null || x == "") {

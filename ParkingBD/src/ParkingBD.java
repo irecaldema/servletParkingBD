@@ -1,10 +1,9 @@
-import com.zubiri.parking.ParkingVehiculos;
-import com.zubiri.parking.Vehiculo;
-import com.zubiri.parking.Coche;
+//import com.zubiri.parking.ParkingVehiculos;
+//import com.zubiri.parking.Vehiculo;
+//import com.zubiri.parking.Coche;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.InputMismatchException;
 import java.sql.*;
 
 import javax.servlet.ServletException;
@@ -23,23 +22,24 @@ import javax.servlet.http.HttpServletResponse;
 public class ParkingBD extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-    private static final String USUARIO="root";
-    private static final String CONTRA="zubiri";
-    //private static final String bd = "pruebas_java";
-    static final String URL_BD="jdbc:mysql://localhost/pruebas_java";
-    /**
+	private static final String USUARIO="root";
+	private static final String CONTRA="zubiri";
+	static final String URL_BD="jdbc:mysql://localhost/pruebas_java";
+	/**
      * @see HttpServlet#HttpServlet()
      */
-    public ParkingBD() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+
+	public ParkingBD() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		doPost(request, response);
 	}
 
 	/**
@@ -47,584 +47,527 @@ public class ParkingBD extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-				
-		Connection con = null;	
-		Statement sentencia = null;
-		try{
-			System.out.println("en el try crear");
-			
-	        // Register JDBC driver
-	        Class.forName("com.mysql.jdbc.Driver");
-
-	        // Open a connection
-	        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
-	        
-	        sentencia = con.createStatement();	        
-	        String sql;
-	        
-	        sql="CREATE TABLE IF NOT EXISTS coches (matricula VARCHAR(7),marca VARCHAR(20),motor BOOLEAN,automatico BOOLEAN,n_ruedas INTEGER(2),consumo INTEGER(3), PRIMARY KEY (matricula))";
-	        
-	        /*CREATE TABLE coches (
-	        	    matricula VARCHAR(7),
-	        	    marca VARCHAR(20),
-	        	    motor BOOLEAN,
-	        	    automatico BOOLEAN,
-	        	    n_ruedas INTEGER(2),
-	        	    consumo INTEGER(3),
-	        	    PRIMARY KEY (matricula)
-	        	    );*/
-	        
-	        sentencia.executeUpdate(sql);	    
-		}catch(Exception e){
-			System.out.println("en el catch 1");
-			System.err.println("error "+ e);
-		}
-	        
-		/*if (ParkingVehiculos.getVehiculos().size()==0){
-			//lectura del archivo
-			ParkingVehiculos.leerVehiculos();			
-		}*/
-		String gestion=request.getParameter("gestion");
-		System.out.println(gestion);
-		if (gestion.equals("mostrar_vehiculos")){
-			System.out.println("empieza mostrando");
-			//response(response,ParkingVehiculos.getVehiculos());			
-			try{
-				System.out.println("en el try mostrar");
-		        // Register JDBC driver
-		        Class.forName("com.mysql.jdbc.Driver");
-
-		        // Open a connection
-		        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
-		        
-		        sentencia = con.createStatement();
-		        
-		        String sql;		        
-		        sql="SELECT matricula, marca FROM coches";
-		        ResultSet mostrar = sentencia.executeQuery(sql);
-		        int cont=0;
-		        String [] matricula = new String[100];
-		        String [] marca = new String[100];
-		        System.out.println("pre while");
-		        while(mostrar.next()){	
-		        	System.out.println("matricula:"+mostrar.getString("matricula"));
-		        	matricula[cont] = mostrar.getString("matricula");
-		        	System.out.println("matricula "+matricula[cont]);
-		        	marca[cont] = mostrar.getString("marca");
-		        	System.out.println("marca "+marca[cont]);
-		        	cont++;
-		        }
-		        System.out.println("post while");
-		        
-		    con.close();    
-		    response(response,matricula,marca);
-		    
-			}catch(Exception e){
-				System.out.println("en el catch 2");
-				System.err.println("error "+ e);
-			}
-			
-		}else if(gestion.equals("buscar_matricula")){
-			System.out.println("empieza buscando");
-			String referencia=request.getParameter("matricula");
-			//Vehiculo encontrado = new Coche();
-			try{
-				//encontrado = ParkingVehiculos.buscarVehiculo(matricula);
-				//response(response, encontrado);
-				
-				// Register JDBC driver
-				Class.forName("com.mysql.jdbc.Driver");
-
-		        // Open a connection
-		        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
-		        
-		        sentencia = con.createStatement();
-		        
-		        String sql;		    
-		        System.out.println("referencia: "+referencia);		     
-		        //sql="SELECT matricula, marca FROM coches WHERE matricula='"+referencia+"'";
-		        sql="SELECT * FROM coches WHERE matricula=\""+referencia+"\"";
-        	    //matricula VARCHAR(7), marca VARCHAR(20), motor BOOLEAN,  automatico BOOLEAN,n_ruedas INTEGER(2),consumo INTEGER(3),
-		        ResultSet buscar = sentencia.executeQuery(sql);
-		        System.out.println("resultado: "+buscar);
-		        if(buscar.next()){
-			        while(buscar.next()){		        	
-				        String matricula = buscar.getString("matricula");			        
-				        String marca = buscar.getString("marca");
-				        Boolean motor = buscar.getBoolean("motor");
-				        Boolean automatico = buscar.getBoolean("automatico");
-				        Integer n_ruedas = buscar.getInt("n_ruedas");
-				        Integer consumo = buscar.getInt("consumo"); 			      
-				        response(response,matricula,marca,motor,automatico,n_ruedas,consumo);
-			        }
-		        }else{
-		        	response(response, "No se ha encontrado el vehiculo, compruebe la matricula: "+referencia+".");
-			    }       
-		        con.close();    
-		    	
-			}catch(ArrayIndexOutOfBoundsException e){
-				//response(response, "no se encontro el vehiculo");
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}else if(gestion.equals("anyadir_vehiculo")){
-			System.out.println("empieza anyadiendo");
-			int n_ruedas = Integer.parseInt(request.getParameter("numruedas"));
-			System.out.println(request.getParameter("motor"));
-			boolean motor = Boolean.parseBoolean(request.getParameter("motor"));
-			System.out.println(motor);
-			String marca = request.getParameter("marca");
-			String matricula = request.getParameter("matricula");
-			boolean automatico = Boolean.parseBoolean(request.getParameter("automatico"));
-			int consumo = Integer.parseInt(request.getParameter("consumo"));	
-			System.out.println("new coche");
-					//Coche nuevo = new Coche(n_ruedas,motor,marca,matricula,automatico,consumo);
-					//ParkingVehiculos.anyadirVehiculosFichero(nuevo);
-					//ParkingVehiculos.anyadirCoche(nuevo);
-			try{
-				
-				// Register JDBC driver
-				Class.forName("com.mysql.jdbc.Driver");
-
-		        // Open a connection
-		        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
-		        
-		        sentencia = con.createStatement();
-		        
-		        String sql;
-		        //INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
-		        System.out.println("INSERT INTO coches VALUES (\""+matricula+"\",\""+marca+"\","+motor+","+automatico+","+n_ruedas+","+consumo+")");
-		        sql="INSERT INTO coches VALUES (\""+matricula+"\",\""+marca+"\","+motor+","+automatico+","+n_ruedas+","+consumo+")";
-		        int crear = sentencia.executeUpdate(sql);
-		        System.out.println("valor crear: "+crear);
-        	    //matricula VARCHAR(7), marca VARCHAR(20), motor BOOLEAN,  automatico BOOLEAN,n_ruedas INTEGER(2),consumo INTEGER(3),
-		        sql="SELECT * FROM coches WHERE matricula='"+matricula+"'";
-		        ResultSet buscar = sentencia.executeQuery(sql);
-		        while(buscar.next()){
-			        String encontrado = buscar.getString("matricula");
-			        if(encontrado!=null){			        	
-				        String matricula2 = buscar.getString("matricula");
-				        String marca2 = buscar.getString("marca");
-				        Boolean motor2 = buscar.getBoolean("motor");
-				        Boolean automatico2 = buscar.getBoolean("automatico");
-				        Integer n_ruedas2 = buscar.getInt("n_ruedas");
-				        Integer consumo2 = buscar.getInt("consumo");
-				        System.out.println("matricula: "+matricula2);
-				        System.out.println("marca: "+marca2);
-				        response(response,matricula2,marca2,motor2,automatico2,n_ruedas2,consumo2);
-					}else{
-						response(response, "error al anyadir vehiculo");
-					}
-		        }
-		        con.close();    
-		    	
-			}catch(ArrayIndexOutOfBoundsException e){
-				//response(response, "no se encontro el vehiculo");
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-			/*if(ParkingVehiculos.buscarVehiculo(matricula)==nuevo){
-				response(response, "vehiculo anyadido");
-			}else{
-				response(response, "error al anyadir vehiculo");
-			}*/
-		}else if(gestion.equals("borrar_vehiculo")){
-			System.out.println("borrando");
-			String sentenciado = request.getParameter("matricula");
-			Boolean confirmacion = Boolean.parseBoolean(request.getParameter("confirmacion"));
-			if (confirmacion!=true){
-				confirmacion=false;
-				//Vehiculo sentenciado = new Coche();
-				//sentenciado=ParkingVehiculos.buscarVehiculo(matricula);
-				response(response, "Seguro que quieres borrar el vehiculo?", sentenciado);
-			}else{
-				//ParkingVehiculos.borrarVehiculosFichero(sentenciado);
-				//ParkingVehiculos.borrarVehiculo(sentenciado);
-				
-				try{					
-					// Register JDBC driver
-					Class.forName("com.mysql.jdbc.Driver");
-			        // Open a connection
-			        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);			        
-			        sentencia = con.createStatement();
-			        
-			        String sql;
-			        //INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
-			        //DELETE FROM coches where matricula="0000AAA";
-			        System.out.println("DELETE FROM coches where matricula=\""+sentenciado+"\"");
-			        sql="DELETE FROM coches where matricula=\""+sentenciado+"\"";
-			        int borrar = sentencia.executeUpdate(sql);
-			        System.out.println("valor crear: "+borrar);
-			        if(borrar==1){
-			        	response(response, "Se ha borrado el vehiculo");
-			        }else{
-			        	response(response, "No se ha borrado el vehiculo, compruebe la matricula: "+sentenciado+".");
-			        }
-			        con.close();			    	
-				}catch(ArrayIndexOutOfBoundsException e){
-					//response(response, "no se encontro el vehiculo");
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-			}
-
-		}else if (gestion.equals("modificar_vehiculo")) {			
-			System.out.println("Empieza modificando");
-			//UPDATE tabla SET campo = ‘valor’, campo2 = ‘valor2′ WHERE condición;
-			//"UPDATE coches SET matricula = "+matriculanueva+" WHERE SELECT matricula FROM coches where matricula="+matriculavieja+";
-			//"UPDATE coches SET "+cambios+" WHERE SELECT matricula FROM coches where matricula="+matriculavieja+";
-			//cambios="matricula = \""+matriculanueva+"\",";
-			//cambios+= marca = \""+marca+"\",";
-			//cambios+= motor = \""+motor+"\",";
-			//cambios+= automatico = \""+automatico+"\",";
-			//cambios+= n_ruedas = \""+n_ruedas+"\",";
-			//cambios+= consumo = \""+consumo+"\"";
-			Boolean confirmacion = Boolean.parseBoolean(request.getParameter("confirmacion"));
-			if(confirmacion!=true){
-				formulario_modificar(response,request.getParameter("matriculavieja"));
-			}else{
-				int n_ruedas = Integer.parseInt(request.getParameter("numruedas"));
-				boolean motor = Boolean.parseBoolean(request.getParameter("motor"));
-				String marca = request.getParameter("marca");
-				String matriculanueva = request.getParameter("matriculanueva");
-				String matriculavieja = request.getParameter("matriculavieja");
-				boolean automatico = Boolean.parseBoolean(request.getParameter("automatico"));
-				int consumo = Integer.parseInt(request.getParameter("consumo"));
-				String cambios="";
-				cambios="matricula = \""+matriculanueva+"\",";
-				cambios+=" marca = \""+marca+"\",";
-				cambios+=" motor = "+motor+",";
-				cambios+=" automatico = "+automatico+",";
-				cambios+=" n_ruedas = \""+n_ruedas+"\",";
-				cambios+=" consumo = \""+consumo+"\"";
-				
-				try{					
-					// Register JDBC driver
-					Class.forName("com.mysql.jdbc.Driver");
-			        // Open a connection
-			        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);			        
-			        sentencia = con.createStatement();
-			        
-			        String sql;
-			        //INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
-			        //DELETE FROM coches where matricula="0000AAA";
-			        System.out.println("UPDATE coches SET "+cambios+" WHERE matricula=\""+matriculavieja+"\"");
-			        sql="UPDATE coches SET "+cambios+" WHERE matricula=\""+matriculavieja+"\"";
-			        int modificar = sentencia.executeUpdate(sql);
-			        System.out.println("valor crear: "+modificar);
-			        if(modificar==1){
-			        	response(response, "Se ha modificado el vehiculo "+cambios);
-			        }else{
-			        	response(response, "Error! No se ha modificado el vehiculo, compruebe las matricula1: "+matriculavieja+" matricula2 "+matriculanueva );
-			        }
-			        con.close();
-				}catch(ArrayIndexOutOfBoundsException e){
-					//response(response, "no se encontro el vehiculo");
-				}catch(Exception e){
-					e.printStackTrace();
-				}			        
-			}	
-				/*try {
-					if (ParkingVehiculos.buscarVehiculo(matriculavieja) != null) {
-						try {
-							if (ParkingVehiculos.buscarVehiculo(matriculanueva) != null) {
-								response(response, "La matricula introducida ya existe");
-							}
-						} catch (ArrayIndexOutOfBoundsException e) {
-							System.out.println("matricula: "+matriculavieja+" matri nueva: "+matriculanueva+" marca: "+marca+" ruedas: "+n_ruedas+" motor: "+motor+" automa: "+automatico+" consu: "+consumo);
-							ParkingVehiculos.modificarVehiculosFicheroServlet(matriculavieja, matriculanueva, marca, n_ruedas, motor, automatico, consumo);
-							ParkingVehiculos.modificarVehiculoServlet(matriculavieja, matriculanueva, marca, n_ruedas, motor, automatico, consumo);
-							System.out.println("Vehículo modificado");
-							response(response, "Vehículo modificado");
-						}
-					}
-				} catch (ArrayIndexOutOfBoundsException e) {
-					response(response, "No se encontró el vehículo");
-				}
-			}*/
-		}
-		//ParkingVehiculos pv = new ParkingVehiculos();
-		//response(response,"prueba");
-		System.out.println("fin");		
-	}
-	
-	/*private void response(HttpServletResponse response, ArrayList<Vehiculo> vehiculos)
-			throws IOException {
-			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
-			out.println("<body>");
-			out.println("<p>-------------------------------</p>");
-			for (int i=0;i<vehiculos.size();i++){				
-				out.println("<b>matricula:</b> "+vehiculos.get(i).getMatricula()+" | ");
-				out.print("<b>marca:</b> "+vehiculos.get(i).getMarca()+"");
-				out.println("<p>-------------------------------</p>");
-			}
-			out.println("<a href='index.html'><button>volver</button></a>");
-			out.println("</body>");
-			out.println("</html>");
-	}*/
-	
-	//respuesta mopstrar
-	private void response(HttpServletResponse response, String [] matricula, String [] marca)
-			throws IOException {
-			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
-			out.println("<body>");
-			out.println("<p>-------------------------------</p>");
-			for (int i=0;i<matricula.length;i++){	
-				if(matricula[i]==null){
-					break;
-				}else{
-				out.println("<b>matricula:</b> "+matricula[i]+" | ");
-				out.print("<b>marca:</b> "+marca[i]+"");
-				out.println("<p>-------------------------------</p>");
-				}
-			}
-			out.println("<a href='index.html'><button>volver</button></a>");
-			out.println("</body>");
-			out.println("</html>");
-	}
-	
-	//respuesta simple
-	private void response(HttpServletResponse response,String msg)
-			throws IOException {
-			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
-			out.println("<body>");				
-			out.println("<p>"+msg+"</p>");
-			out.println("<a href='index.html'><button>volver</button></a>");
-			out.println("</body>");
-			out.println("</html>");
-	}
-	
-	/*private void response(HttpServletResponse response, Vehiculo coche)
-			throws IOException {
-			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
-			out.println("<body>");
-			out.println("<p>"+coche.getMarca()+"</p>");
-			out.println("<p>"+coche.getMatricula()+"</p>");
-			out.println("<a href='index.html'><button>volver</button></a>");
-			out.println("</body>");
-			out.println("</html>");
-	}*/
-	
-	//respuesta buscar
-	private void response(HttpServletResponse response, String matricula, String marca,Boolean motor,Boolean automatico,Integer n_ruedas,Integer consumo)
-			throws IOException {
-			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
-			out.println("<body>");
-			out.println("<table align=\"center\" border=5><tr>");
-			out.println("<td>matricula</td>");
-			out.println("<td>marca</td>");
-			out.println("<td>motor</td>");
-			out.println("<td>automatico</td>");
-			out.println("<td>numero de ruedas</td>");
-			out.println("<td>consumo</td>");
-			out.println("</tr><tr>");
-			out.println("<td>"+matricula+"</td>");
-			out.println("<td>"+marca+"</td>");
-			if(motor) {
-				out.println("<td>si</td>");
-			}else{
-				out.println("<td>no</td>");
-			}			
-			if(automatico){
-				out.println("<td>si</td>");
-			}else{
-				out.println("<td>no</td>");
-			}			
-			out.println("<td>"+n_ruedas+"</td>");
-			out.println("<td>"+consumo+"</td>");
-			out.println("</tr><tr>");
-			out.println("<td colspan=6>");
-			out.println("<center><a href='index.html'><button>volver</button></a></center>");
-			out.println("</td>");
-			out.println("</tr></table>");
-			out.println("</body>");
-			out.println("</html>");
-	}
-	
-	/*private void response(HttpServletResponse response,String msg ,Vehiculo coche)
-			throws IOException {
-			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
-			out.println("<body align='center'>");
-			out.println("<p>"+msg+"</p>");
-			out.println("<p>matricula:"+coche.getMatricula()+" | marca del vehiculo: "+coche.getMarca()+"</p>");
-			out.println("<form name=\"borrar_vehiculo\" method=\"post\" action=\"GestorBD\">");
-			out.println("<input name='gestion' hidden='true' type='text'  value='borrar_vehiculo'/>");
-			out.println("<input name=\"matricula\" hidden=\"true\" type=\"text\"  value="+coche.getMatricula()+"></input>");
-			out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
-			out.println("<input type='submit' id='submit' value='borrar'>");
-			out.println("</form>");
-			out.println("<a href='index.html'><button>volver</button></a>");
-			out.println("</body>");
-			out.println("</html>");
-	}*/
-	
-	//confirmacion borrar
-	private void response(HttpServletResponse response,String msg ,String matricula)
-			throws IOException {
-			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
-			out.println("<body align='center'>");
-			out.println("<p>"+msg+"</p>");
-			out.println("<p>matricula:"+matricula+"</p>");
-			out.println("<form name=\"borrar_vehiculo\" method=\"post\" action=\"GestorBD\">");
-			out.println("<input name='gestion' hidden='true' type='text'  value='borrar_vehiculo'/>");
-			out.println("<input name=\"matricula\" hidden=\"true\" type=\"text\"  value="+matricula+"></input>");
-			out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
-			out.println("<input type='submit' id='submit' value='borrar'>");
-			out.println("</form>");
-			out.println("<a href='index.html'><button>volver</button></a>");
-			out.println("</body>");
-			out.println("</html>");
-	}	
-	
-	/*private void formulario_modificar(HttpServletResponse response,String matricula)
-			throws IOException {
-		System.out.println("se esta modificando el vehiculo con matricula: "+matricula);
-		Vehiculo vehiculo_viejo = new Coche();
-		vehiculo_viejo=ParkingVehiculos.buscarVehiculo(matricula);
-		
-		if (vehiculo_viejo instanceof Coche){
-			//Coche coche_viejo = ( Coche ) vehiculo_viejo;
-			//coche_viejo.getConsumo100km();
-			System.out.println("prueba get matricula: "+coche_viejo.getMatricula());
-		
 		response.setContentType( "text/html; charset=iso-8859-1" );
-		PrintWriter out = response.getWriter();
-		out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
-		out.println("<body>");
-		out.println("<form name='modificar_vehiculo' method='post' action='GestorBD'>");
-			out.println("<input name='gestion' hidden='true' type='text' value='modificar_vehiculo'/>");
-			out.println("<input name='matriculavieja' type='text' value='"+coche_viejo.getMatricula()+"' hidden='true'/> <br>");
-			out.println("Matricula a modificar: <input type='text' value='"+coche_viejo.getMatricula()+"' disabled/> <br>");
-			out.println("Nueva matrícula: <input name='matriculanueva' type='text' id='matricula' value='matricula (4 numeros 3 letras)'/> <br>");
-			out.println("Marca: <input name='marca' type='text' id='marca' value='"+coche_viejo.getMarca()+"' /> <br>");
-			out.println("Número de ruedas: <input name='numruedas' type='text' id='numruedas' value='"+coche_viejo.getNumRuedas()+"' /> <br>");
-			out.println("¿Tiene motor?");
-			String motor_si="";
-			String motor_no="";
-			if (coche_viejo.isMotor()) {
-				motor_si="checked";
-			} else {
-				motor_no="checked";
-			}
-			out.println("<input name='motor' type='radio' value='true' "+motor_si+" /> Sí");
-			out.println("<input name='motor' type='radio' value='false' "+motor_no+"/> No <br>");
-			out.println("¿Es automático?");
-			String automatico_si="";
-			String automatico_no="";
-			if (coche_viejo.isAutomatico()) {
-				automatico_si="checked";
-			} else {
-				automatico_no="checked";
-			}
-			out.println("<input name='automatico' type='radio' value='true' "+automatico_si+" /> Sí");
-			out.println("<input name='automatico' type='radio' value='false' "+automatico_no+"/> No <br>");
-			out.println("Consumo en 100km <input name='consumo' type='text' id='consumo100km' value='"+coche_viejo.getConsumo100km()+"' /> <br>");
-			out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
-			out.println("<input type='submit' id='submit' value='Modificar'>");
-		out.println("</form>");
-		out.println("<a href='index.html'><button>volver</button></a>");
-		out.println("</body>");
-		out.println("</html>");
-		}
-	}*/
-	
-	//respuesta modificar
-	private void formulario_modificar(HttpServletResponse response,String referencia)
-			throws IOException {
-		System.out.println("se esta modificando el vehiculo con matricula: "+referencia);
+				
 		Connection con = null;	
 		Statement sentencia = null;
-		try{
-			//encontrado = ParkingVehiculos.buscarVehiculo(matricula);
-			//response(response, encontrado);
+		try {
+			System.out.println("En el try crear");
 			
 			// Register JDBC driver
 			Class.forName("com.mysql.jdbc.Driver");
 
-	        // Open a connection
-	        con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
-	        
-	        sentencia = con.createStatement();
-	        
-	        String sql;		    
-	        System.out.println("referencia: "+referencia);		     
-	        //sql="SELECT matricula, marca FROM coches WHERE matricula='"+referencia+"'";
-	        sql="SELECT * FROM coches WHERE matricula=\""+referencia+"\"";
-    	    //matricula VARCHAR(7), marca VARCHAR(20), motor BOOLEAN,  automatico BOOLEAN,n_ruedas INTEGER(2),consumo INTEGER(3),
-	        ResultSet buscar = sentencia.executeQuery(sql);
-	        String matricula = null;
-	        String marca = null;
-	        Boolean motor = false;
-	        Boolean automatico = false;
-	        Integer n_ruedas = 0;
-	        Integer consumo = 0; 
-	        while(buscar.next()){
-		        matricula = buscar.getString("matricula");
-		        marca = buscar.getString("marca");
-		        motor = buscar.getBoolean("motor");
-		        automatico = buscar.getBoolean("automatico");
-		        n_ruedas = buscar.getInt("n_ruedas");
-		        consumo = buscar.getInt("consumo");
-		        System.out.println("matricula: "+matricula);
-		        System.out.println("marca: "+marca);
-		        //response(response,matricula,marca,motor,automatico,n_ruedas,consumo);
-	        }
-	        
-	        response.setContentType( "text/html; charset=iso-8859-1" );
+			// Open a connection
+			con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+
+			sentencia = con.createStatement();	        
+			String sql;
+
+			sql="CREATE TABLE IF NOT EXISTS coches (matricula VARCHAR(7),marca VARCHAR(20),motor BOOLEAN,automatico BOOLEAN,n_ruedas INTEGER(2),consumo INTEGER(3), PRIMARY KEY (matricula))";
+
+			/*CREATE TABLE coches (
+				matricula VARCHAR(7),
+				marca VARCHAR(20),
+				motor BOOLEAN,
+				automatico BOOLEAN,
+				n_ruedas INTEGER(2),
+				consumo INTEGER(3),
+				PRIMARY KEY (matricula)
+			);*/
+
+			sentencia.executeUpdate(sql);
+		} catch(Exception e) {
+			System.out.println("En el catch 1");
+			System.err.println("Error "+ e);
+		}
+
+		String gestion=request.getParameter("gestion");
+		System.out.println(gestion);
+		if (gestion.equals("mostrar_vehiculos")) {
+			System.out.println("Empieza mostrando");
+
+			try {
+				System.out.println("En el try mostrar");
+				// Register JDBC driver
+				Class.forName("com.mysql.jdbc.Driver");
+
+				// Open a connection
+				con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+
+				sentencia = con.createStatement();
+
+				String sql;		        
+				sql="SELECT matricula, marca FROM coches";
+				ResultSet mostrar = sentencia.executeQuery(sql);
+				int cont=0;
+				String [] matricula = new String[100];
+				String [] marca = new String[100];
+				System.out.println("Pre while");
+				while (mostrar.next()) {	
+					System.out.println("Matrícula:"+mostrar.getString("matricula"));
+					matricula[cont] = mostrar.getString("matricula");
+					System.out.println("Matrícula "+matricula[cont]);
+					marca[cont] = mostrar.getString("marca");
+					System.out.println("Marca "+marca[cont]);
+					cont++;
+				}
+				System.out.println("Post while");
+
+				con.close();    
+				response(response,matricula,marca);
+
+			} catch(Exception e) {
+				System.out.println("En el catch 2");
+				System.err.println("Error "+ e);
+			}
+
+		} else if (gestion.equals("buscar_matricula")) {
+			System.out.println("Empieza buscando");
+			String referencia=request.getParameter("matricula");
+			
+			try {
+				
+				// Register JDBC driver
+				Class.forName("com.mysql.jdbc.Driver");
+
+				// Open a connection
+				con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+				
+				sentencia = con.createStatement();
+				
+				String sql;		    
+				System.out.println("Referencia: "+referencia);		     
+				//sql="SELECT matricula, marca FROM coches WHERE matricula='"+referencia+"'";
+				sql="SELECT * FROM coches WHERE matricula=\""+referencia+"\"";
+				
+				ResultSet buscar = sentencia.executeQuery(sql);
+				int cont = 0;
+				String matricula = null;
+				String marca = null;
+				Boolean motor = false;
+				Boolean automatico = false;
+				Integer n_ruedas = 0;
+				Integer consumo = 0;
+				while (buscar.next()) {
+					matricula = buscar.getString("matricula");
+					marca = buscar.getString("marca");
+					motor = buscar.getBoolean("motor");
+					automatico = buscar.getBoolean("automatico");
+					n_ruedas = buscar.getInt("n_ruedas");
+					consumo = buscar.getInt("consumo");
+					System.out.println("Matrícula: "+matricula);
+					System.out.println("Marca: "+marca);
+					//response(response,matricula,marca,motor,automatico,n_ruedas,consumo);
+					cont++;
+				}
+				if (cont > 0) {
+					response(response,matricula,marca,motor,automatico,n_ruedas,consumo);
+				} else {
+					response(response, "No se encontró el vehículo");
+				}
+				con.close();    
+			
+			} catch(ArrayIndexOutOfBoundsException e) {
+				//response(response, "no se encontro el vehiculo");
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		} else if (gestion.equals("anyadir_vehiculo")) {
+			System.out.println("Empieza añadiendo");
+			int n_ruedas = Integer.parseInt(request.getParameter("numruedas"));
+			boolean motor = Boolean.parseBoolean(request.getParameter("motor"));
+			String marca = request.getParameter("marca");
+			String matricula = request.getParameter("matricula");
+			boolean automatico = Boolean.parseBoolean(request.getParameter("automatico"));
+			int consumo = Integer.parseInt(request.getParameter("consumo"));
+			System.out.println("Nuevo coche");
+
+			try {
+				
+				// Register JDBC driver
+				Class.forName("com.mysql.jdbc.Driver");
+
+				// Open a connection
+				con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+				
+				sentencia = con.createStatement();
+				
+				String sql;
+				//INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
+				System.out.println("INSERT INTO coches VALUES (\""+matricula+"\",\""+marca+"\","+motor+","+automatico+","+n_ruedas+","+consumo+")");
+				sql="INSERT INTO coches VALUES (\""+matricula+"\",\""+marca+"\","+motor+","+automatico+","+n_ruedas+","+consumo+")";
+				int crear = sentencia.executeUpdate(sql);
+				System.out.println("Valor crear: "+crear);
+				
+				sql="SELECT * FROM coches WHERE matricula='"+matricula+"'";
+				ResultSet buscar = sentencia.executeQuery(sql);
+				while (buscar.next()) {
+					String encontrado = buscar.getString("matricula");
+					if (encontrado!=null) {			        	
+						String matricula2 = buscar.getString("matricula");
+						String marca2 = buscar.getString("marca");
+						Boolean motor2 = buscar.getBoolean("motor");
+						Boolean automatico2 = buscar.getBoolean("automatico");
+						Integer n_ruedas2 = buscar.getInt("n_ruedas");
+						Integer consumo2 = buscar.getInt("consumo");
+						System.out.println("Matrícula: "+matricula2);
+						System.out.println("Marca: "+marca2);
+						response(response,matricula2,marca2,motor2,automatico2,n_ruedas2,consumo2);
+					} else {
+						response(response, "Error al añadir vehículo");
+					}
+				}
+				con.close();    
+				
+			} catch(ArrayIndexOutOfBoundsException e) {
+				//response(response, "no se encontro el vehiculo");
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		} else if(gestion.equals("borrar_vehiculo")) {
+			System.out.println("Borrando");
+			String sentenciado = request.getParameter("matricula");
+			Boolean confirmacion = Boolean.parseBoolean(request.getParameter("confirmacion"));
+
+			try {
+				// Register JDBC driver
+				Class.forName("com.mysql.jdbc.Driver");
+
+				// Open a connection
+				con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+				
+				sentencia = con.createStatement();
+				
+				String sql;		    
+				System.out.println("Referencia: "+sentenciado);		     
+				//sql="SELECT matricula, marca FROM coches WHERE matricula='"+referencia+"'";
+				sql="SELECT * FROM coches WHERE matricula=\""+sentenciado+"\"";
+				
+				ResultSet buscar = sentencia.executeQuery(sql);
+				int cont = 0;
+				while (buscar.next()) {
+					cont++;
+				}
+				if (cont > 0) {
+					System.out.println("Contador: " + cont);
+					if (confirmacion!=true) {
+						confirmacion=false;
+						response(response, "¿Seguro que quieres borrar el vehículo?", sentenciado);
+					} else {
+						try {					
+							// Register JDBC driver
+							Class.forName("com.mysql.jdbc.Driver");
+							// Open a connection
+							con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);			        
+							sentencia = con.createStatement();
+							
+							//String sql;
+							//INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
+							//DELETE FROM coches where matricula="0000AAA";
+							System.out.println("DELETE FROM coches where matricula=\""+sentenciado+"\"");
+							sql="DELETE FROM coches where matricula=\""+sentenciado+"\"";
+							int borrar = sentencia.executeUpdate(sql);
+							System.out.println("Valor borrar: "+borrar);
+							if (borrar==1) {
+								response(response, "Se ha borrado el vehículo");
+							} else {
+								response(response, "No se ha borrado el vehículo, compruebe la matrícula: "+sentenciado+".");
+							}
+							con.close();			    	
+						} catch(ArrayIndexOutOfBoundsException e) {
+							//response(response, "no se encontro el vehiculo");
+						} catch(Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} else {
+					response(response, "No se encontró el vehículo");
+				}
+			} catch(ArrayIndexOutOfBoundsException e) {
+				//response(response, "no se encontro el vehiculo");
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		} else if (gestion.equals("modificar_vehiculo")) {
+			System.out.println("Empieza modificando");
+
+			Boolean confirmacion = Boolean.parseBoolean(request.getParameter("confirmacion"));
+			String matriculavieja1 = request.getParameter("matriculavieja");
+			
+			try {
+				
+				// Register JDBC driver
+				Class.forName("com.mysql.jdbc.Driver");
+
+				// Open a connection
+				con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+				
+				sentencia = con.createStatement();
+				
+				String sql;		    
+				System.out.println("Referencia: "+matriculavieja1);		     
+				//sql="SELECT matricula, marca FROM coches WHERE matricula='"+referencia+"'";
+				sql="SELECT * FROM coches WHERE matricula=\""+matriculavieja1+"\"";
+				
+				ResultSet buscar = sentencia.executeQuery(sql);
+				int cont = 0;
+				while (buscar.next()) {
+					cont++;
+				}
+				if (cont > 0) {
+					System.out.println("Contador: " + cont);
+					if (confirmacion!=true) {
+						formulario_modificar(response,request.getParameter("matriculavieja"));
+					} else {
+						int n_ruedas = Integer.parseInt(request.getParameter("numruedas"));
+						boolean motor = Boolean.parseBoolean(request.getParameter("motor"));
+						String marca = request.getParameter("marca");
+						String matriculanueva = request.getParameter("matriculanueva");
+						String matriculavieja = request.getParameter("matriculavieja");
+						boolean automatico = Boolean.parseBoolean(request.getParameter("automatico"));
+						int consumo = Integer.parseInt(request.getParameter("consumo"));
+						String cambios="";
+						cambios="matricula = \""+matriculanueva+"\",";
+						cambios+=" marca = \""+marca+"\",";
+						cambios+=" motor = "+motor+",";
+						cambios+=" automatico = "+automatico+",";
+						cambios+=" n_ruedas = \""+n_ruedas+"\",";
+						cambios+=" consumo = \""+consumo+"\"";
+						
+						try {
+							// Register JDBC driver
+							Class.forName("com.mysql.jdbc.Driver");
+							// Open a connection
+							con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);			        
+							sentencia = con.createStatement();
+							
+							//String sql;
+							//INSERT INTO coches VALUES ("0000AAA", "prueba1", true, true, 4, 100);
+							//DELETE FROM coches where matricula="0000AAA";
+							System.out.println("UPDATE coches SET "+cambios+" WHERE matricula=\""+matriculavieja+"\"");
+							sql="UPDATE coches SET "+cambios+" WHERE matricula=\""+matriculavieja+"\"";
+							int modificar = sentencia.executeUpdate(sql);
+							System.out.println("Valor crear: " + modificar);
+							if (modificar==1) {
+								response(response, "Se ha modificado el vehículo " + matriculavieja + ".<br>" + cambios);
+							} else {
+								response(response, "¡Error! No se ha modificado el vehículo, compruebe las matrícula1: "+matriculavieja+" matricula2 "+matriculanueva );
+							}
+							con.close();
+						} catch(ArrayIndexOutOfBoundsException e) {
+							//response(response, "no se encontro el vehiculo");
+						} catch(Exception e) {
+							e.printStackTrace();
+						}
+					}
+				} else {
+					response(response, "No se encontró el vehículo");
+				}
+				con.close();    
+			
+			} catch(ArrayIndexOutOfBoundsException e) {
+				//response(response, "no se encontro el vehiculo");
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Fin");
+	}
+
+	// Mostrar
+	private void response(HttpServletResponse response, String [] matricula, String [] marca) throws IOException {
+		response.setContentType( "text/html; charset=iso-8859-1" );
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<head>");
+			out.println("<title> Vehículos </title>");
+			out.println("<link rel='stylesheet' type='text/css' href='stylebd.css'>");
+		out.println("</head>");
+		out.println("<body>");
+		//out.println("<p>-------------------------------</p>");
+		for (int i=0; i<matricula.length; i++) {	
+			if (matricula[i] == null) {
+				break;
+			} else {
+				out.println("<p>-------------------------------</p>");
+				out.println("<p> <b>Matrícula:</b> " + matricula[i] + " | ");
+				out.print(" <b>Marca:</b> " + marca[i] + "</p>");
+				out.println("<p>-------------------------------</p>");
+			}
+		}
+		out.println("<a href='index.html'> <button> Volver </button> </a>");
+		out.println("</body>");
+		out.println("</html>");
+	}
+	
+	// Respuesta simple
+	private void response(HttpServletResponse response,String msg) throws IOException {
+		response.setContentType( "text/html; charset=iso-8859-1" );
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<head>");
+			out.println("<title> Respuesta </title>");
+			out.println("<link rel='stylesheet' type='text/css' href='stylebd.css'>");
+		out.println("</head>");
+		out.println("<body>");				
+		out.println("<p>" + msg + "</p>");
+		out.println("<a href='index.html'> <button> Volver </button> </a>");
+		out.println("</body>");
+		out.println("</html>");
+	}
+
+	// Buscar y Añadir
+	private void response(HttpServletResponse response, String matricula, String marca,Boolean motor,Boolean automatico,Integer n_ruedas,Integer consumo) throws IOException {
+		response.setContentType( "text/html; charset=iso-8859-1" );
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<head>");
+			out.println("<title>  </title>");
+			out.println("<link rel='stylesheet' type='text/css' href='stylebd.css'>");
+		out.println("</head>");
+		out.println("<body>");
+		out.println("<table align=\"center\" border=5><tr>");
+			out.println("<th>Matrícula</th>");
+			out.println("<th>Marca</th>");
+			out.println("<th>Motor</th>");
+			out.println("<th>Automático</th>");
+			out.println("<th>Número de ruedas</th>");
+			out.println("<th>Consumo</th>");
+		out.println("</tr><tr>");
+			out.println("<td>" + matricula + "</td>");
+			out.println("<td>" + marca + "</td>");
+			if (motor) {
+				out.println("<td>Sí</td>");
+			} else {
+				out.println("<td>No</td>");
+			}			
+			if (automatico) {
+				out.println("<td>Sí</td>");
+			} else {
+				out.println("<td>No</td>");
+			}			
+			out.println("<td>" + n_ruedas + "</td>");
+			out.println("<td>" + consumo + "</td>");
+		out.println("</tr><tr>");
+			out.println("<td colspan=6>");
+				out.println("<center> <a href='index.html'> <button> Volver </button> </a> </center>");
+			out.println("</td>");
+		out.println("</tr></table>");
+		out.println("</body>");
+		out.println("</html>");
+	}
+
+	// Borrar
+	private void response(HttpServletResponse response,String msg ,String matricula) throws IOException {
+		response.setContentType( "text/html; charset=iso-8859-1" );
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<head>");
+			out.println("<title> Borrar </title>");
+			out.println("<link rel='stylesheet' type='text/css' href='stylebd.css'>");
+		out.println("</head>");
+		out.println("<body align='center'>");
+		out.println("<p>" + msg + "</p>");
+		out.println("<p>Matrícula: " + matricula + "</p>");
+		out.println("<form name=\"borrar_vehiculo\" method=\"post\" action=\"GestorBD\">");
+			out.println("<input name='gestion' hidden='true' type='text'  value='borrar_vehiculo'/>");
+			out.println("<input name=\"matricula\" hidden=\"true\" type=\"text\"  value=" + matricula + "></input>");
+			out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
+			out.println("<p> <input type='submit' id='submit' value='Borrar'> </p>");
+		out.println("</form>");
+		out.println("<a href='index.html'> <button> Volver </button> </a>");
+		out.println("</body>");
+		out.println("</html>");
+	}	
+	
+	// Modificar
+	private void formulario_modificar(HttpServletResponse response, String referencia) throws IOException {
+		response.setContentType( "text/html; charset=iso-8859-1" );
+		System.out.println("Se está modificando el vehículo con matricula: " + referencia);
+
+		Connection con = null;	
+		Statement sentencia = null;
+		try {
+			// Register JDBC driver
+			Class.forName("com.mysql.jdbc.Driver");
+
+			// Open a connection
+			con = DriverManager.getConnection(URL_BD,USUARIO,CONTRA);
+			
+			sentencia = con.createStatement();
+			
+			String sql;		    
+			System.out.println("Referencia: "+referencia);		     
+			//sql="SELECT matricula, marca FROM coches WHERE matricula='"+referencia+"'";
+			sql="SELECT * FROM coches WHERE matricula=\""+referencia+"\"";
+			ResultSet buscar = sentencia.executeQuery(sql);
+			String matricula = null;
+			String marca = null;
+			Boolean motor = false;
+			Boolean automatico = false;
+			Integer n_ruedas = 0;
+			Integer consumo = 0; 
+			while (buscar.next()) {
+				matricula = buscar.getString("matricula");
+				marca = buscar.getString("marca");
+				motor = buscar.getBoolean("motor");
+				automatico = buscar.getBoolean("automatico");
+				n_ruedas = buscar.getInt("n_ruedas");
+				consumo = buscar.getInt("consumo");
+				System.out.println("Matrícula: " + matricula);
+				System.out.println("Marca: " + marca);
+			}
+
 			PrintWriter out = response.getWriter();
-			out.println("<html><head><link rel='stylesheet' type='text/css' href='style.css'</head>");
+			out.println("<html>");
+			out.println("<head>");
+				out.println("<title> Modificar </title>");
+				out.println("<link rel='stylesheet' type='text/css' href='stylebd.css'>");
+			out.println("</head>");
 			out.println("<body>");
-			out.println("<form name='modificar_vehiculo' method='post' action='GestorBD'>");
-				out.println("<input name='gestion' hidden='true' type='text' value='modificar_vehiculo'/>");
-				out.println("<input name='matriculavieja' type='text' value='"+referencia+"' hidden='true'/> <br>");
-				out.println("Matricula a modificar: <input type='text' value='"+referencia+"' disabled/> <br>");
-				out.println("Nueva matrícula: <input name='matriculanueva' type='text' id='matricula' value='matricula (4 numeros 3 letras)'/> <br>");
-				out.println("Marca: <input name='marca' type='text' id='marca' value='"+marca+"' /> <br>");
-				out.println("Número de ruedas: <input name='numruedas' type='text' id='numruedas' value='"+n_ruedas+"' /> <br>");
-				out.println("¿Tiene motor?");
-				String motor_si="";
-				String motor_no="";
-				if (motor) {
-					motor_si="checked";
-				} else {
-					motor_no="checked";
-				}
-				out.println("<input name='motor' type='radio' value='true' "+motor_si+" /> Sí");
-				out.println("<input name='motor' type='radio' value='false' "+motor_no+"/> No <br>");
-				out.println("¿Es automático?");
-				String automatico_si="";
-				String automatico_no="";
-				if (automatico) {
-					automatico_si="checked";
-				} else {
-					automatico_no="checked";
-				}
-				out.println("<input name='automatico' type='radio' value='true' "+automatico_si+" /> Sí");
-				out.println("<input name='automatico' type='radio' value='false' "+automatico_no+"/> No <br>");
-				out.println("Consumo en 100km <input name='consumo' type='text' id='consumo100km' value='"+consumo+"' /> <br>");
-				out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
-				out.println("<input type='submit' id='submit' value='Modificar'>");
-			out.println("</form>");
-			out.println("<a href='index.html'><button>volver</button></a>");
+			out.println("<fieldset>	<legend> Modificar Vehículo " + referencia + "</legend>");
+				out.println("<form name='modificar_vehiculo' method='post' action='GestorBD'>");
+					out.println("<input name='gestion' hidden='true' type='text' value='modificar_vehiculo'/>");
+					out.println("<input name='matriculavieja' type='text' value='" + referencia + "' hidden='true'/> <br>");
+					out.println("<label>Matricula a modificar: </label> <input type='text' value='" + referencia + "' disabled/> <br>");
+					out.println("<label>Nueva matrícula: </label> <input name='matriculanueva' type='text' id='matricula' placeholder='4 numeros 3 letras'/> <br>");
+					out.println("<label>Marca: </label> <input name='marca' type='text' id='marca' value='" + marca + "' /> <br>");
+					out.println("<label>Número de ruedas: </label> <input name='numruedas' type='text' id='numruedas' value='"+n_ruedas+"' /> <br>");
+					out.println("<label>¿Tiene motor? </label>");
+					String motor_si = "";
+					String motor_no = "";
+					if (motor) {
+						motor_si = "checked";
+					} else {
+						motor_no = "checked";
+					}
+					out.println("<input name='motor' type='radio' value='true' " + motor_si + " /> Sí");
+					out.println("<input name='motor' type='radio' value='false' " + motor_no + "/> No <br>");
+					out.println("<label>¿Es automático? </label>");
+					String automatico_si = "";
+					String automatico_no = "";
+					if (automatico) {
+						automatico_si = "checked";
+					} else {
+						automatico_no = "checked";
+					}
+					out.println("<input name='automatico' type='radio' value='true' " + automatico_si + " /> Sí");
+					out.println("<input name='automatico' type='radio' value='false' " + automatico_no + "/> No <br>");
+					out.println("<label>Consumo en 100km </label> <input name='consumo' type='text' id='consumo100km' value='" + consumo + "' /> <br>");
+					out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\" value='true'></input>");
+					out.println("<input type='submit' id='submit' value='Modificar'>");
+				out.println("</form>");
+			out.println("</fieldset>");
+			out.println("<br> <a href='index.html'> <button> Volver </button> </a>");
 			out.println("</body>");
 			out.println("</html>");
-	        
-	        con.close();
-	    	
-		}catch(ArrayIndexOutOfBoundsException e){
+
+			con.close();
+
+		} catch(ArrayIndexOutOfBoundsException e) {
 			//response(response, "no se encontro el vehiculo");
-		}catch(Exception e){
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
-
 }
