@@ -363,7 +363,7 @@ public class ParkingBD extends HttpServlet {
 				} else {
 					response(response, "No se encontró el vehículo");
 				}
-				con.close();    
+				con.close();
 			
 			} catch(ArrayIndexOutOfBoundsException e) {
 				//response(response, "no se encontro el vehiculo");
@@ -469,7 +469,7 @@ public class ParkingBD extends HttpServlet {
 		out.println("<body align='center'>");
 		out.println("<p>" + msg + "</p>");
 		out.println("<p>Matrícula: " + matricula + "</p>");
-		out.println("<form name=\"borrar_vehiculo\" method=\"post\" action=\"GestorBD\">");
+		out.println("<form name=\"borrar_vehiculo\" method=\"post\" action=\"GestorBD\" style='margin-right: auto;'>");
 			out.println("<input name='gestion' hidden='true' type='text'  value='borrar_vehiculo'/>");
 			out.println("<input name=\"matricula\" hidden=\"true\" type=\"text\"  value=" + matricula + "></input>");
 			out.println("<input name=\"confirmacion\" hidden=\"true\" type=\"text\"  value='true'></input>");
@@ -526,7 +526,7 @@ public class ParkingBD extends HttpServlet {
 			out.println("</head>");
 			out.println("<body>");
 			out.println("<fieldset>	<legend> Modificar Vehículo " + referencia + "</legend>");
-				out.println("<form name='modificar_vehiculo' method='post' action='GestorBD'>");
+				out.println("<form name='modificar_vehiculo' method='post' onsubmit='return validacion_modificar_vehiculo_bd()' action='GestorBD'>");
 					out.println("<input name='gestion' hidden='true' type='text' value='modificar_vehiculo'/>");
 					out.println("<input name='matriculavieja' type='text' value='" + referencia + "' hidden='true'/> <br>");
 					out.println("<label>Matricula a modificar: </label> <input type='text' value='" + referencia + "' disabled/> <br>");
@@ -559,6 +559,10 @@ public class ParkingBD extends HttpServlet {
 				out.println("</form>");
 			out.println("</fieldset>");
 			out.println("<br> <a href='index.html'> <button> Volver </button> </a>");
+			out.println("<script type=\"text/javascript\">");
+				out.println("function validacion_modificar_vehiculo_bd() { var a = document.forms[\"modificar_vehiculo\"][\"matriculanueva\"].value; if (validar_matricula_bd(a)) { return true; } else { return false; };}");
+				out.println("function validar_matricula_bd(x) { if (x == null || x == \"\") { alert(\"Escribe la matrícula\"); console.log(\"Comprobación nula\"); return false; } else if(x.length!=7) { alert(\"No has introducido una matrícula válida (núm caracteres)\"); console.log(\"Error, número de caracteres matrícula\"); return false; } else { var expreg = /^[0-9]{4}[A-Z,a-z]{3}$/; if (expreg.test(x)) { return true; } else {	alert(\"La matrícula NO es correcta\");	console.log(\"Error en formato matrícula\"); return false; } } }");
+			out.println("</script>");
 			out.println("</body>");
 			out.println("</html>");
 
