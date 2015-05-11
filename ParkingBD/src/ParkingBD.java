@@ -384,12 +384,12 @@ public class ParkingBD extends HttpServlet {
 			out.println("<link rel='stylesheet' type='text/css' href='stylebd.css'>");
 		out.println("</head>");
 		out.println("<body>");
-		//out.println("<p>-------------------------------</p>");
+		out.println("<p>-------------------------------</p>");
 		for (int i=0; i<matricula.length; i++) {	
 			if (matricula[i] == null) {
 				break;
 			} else {
-				out.println("<p>-------------------------------</p>");
+				//out.println("<p>-------------------------------</p>");
 				out.println("<p> <b>Matrícula:</b> " + matricula[i] + " | ");
 				out.print(" <b>Marca:</b> " + marca[i] + "</p>");
 				out.println("<p>-------------------------------</p>");
